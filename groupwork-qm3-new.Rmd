@@ -7,8 +7,8 @@ output:
     toc: true
     toc_float: true
     smooth_scroll: true
-    toc_depth: 2
-    theme: sandstone
+    toc_depth: 3
+    theme: united
     
 ---
 ```{r setup, include=FALSE}
@@ -27,6 +27,12 @@ library(performance)
 <br>
 <br>
 
+## Literature Review ## 
+<br>
+
+## Methodology ## 
+<br>
+
 ## Step 1 : Loading Data ## 
 
 Before all we need to install the packages needed to conduct our analysis *should that go in the Intro maybe?*
@@ -41,7 +47,7 @@ install.packages("gvlma")
 *"readxl" extracts the data from excel spreadsheets.* <br>
 *"stargazer" and "ggplot2" are used to create plots.* <br>
 *"performance" package allows to use the **model_comparison** R function.* <br>
-*"gvlma" package allows to test linear model fit assumptions*
+*"gvlma" package allows to test linear model fit assumptions* <br>
 We also call their libraries to load the packages. 
 ```{r}
 library(readxl)
@@ -52,8 +58,6 @@ library(gvlma)
 ```
 
 Next we import the datasets we have chosen to use for our analysis. <br>
-<br>
-
 The following allow us to measure pollution : 
 ```{r}
 Renewable_energies_dataset <- read_excel("Renewable_energies_dataset.xls")
@@ -87,21 +91,17 @@ recentdata <- within(recentdata, {
 recentdata <-na.omit(recentdata)
 ```
 
-**Table 1**<br>
-*( descriptive statistics )*
+**Table 1 : Descriptive Statistics
 ```{r}
-#We create a table of descriptive statistics or "Table 1"
 stargazer(recentdata, type="text", digits=1,
           title ="Table 1: Summary Statistics of the Variables (2021)")
 ```
-Table 1 summarises complete data for 165 countries in 2021.
+Table 1 summarises the complete data for 165 countries in 2021.
 <br>
 The renewable energy share is very different from country to country, from 0% to 96.3% of total final energy consumption, with a mean of 32.3% and a standard deviation of 26.9. GDP per capita is heavily right-skewed, as its standard deviation (US$21,505) is bigger than its mean (US$15,522), and the richest country’s income is around 280 times that of the poorest. Most countries are at the lower end of the income distribution, which is why we use log GDP per capita in Table 3. <br>
 For the other variables, urbanisation is fairly evenly spread (16.5% to 100%), and gross capital formation varies less than the others, with an average of 23.9% of GDP. Trade openness and natural resource rents are also right-skewed. Most countries are at middle levels, but a few small states are much higher than the rest. FDI has an extreme outlier of 413.3% of GDP, while the mean is only 6.6%. The negative minimum for gross capital formation (−15.7%) is a bit unusual and may be a data issue.<br>
 
 ```{r}
-#We do a boxplot of each variable
-
 boxplot(recentdata$Renewable_energy_consumption, main="Renewable Energy Consumption", ylab="Percentage of GDP", col="blue")
 boxplot(recentdata$GDP_per_capita, main="GDP per Capita", ylab="2015 Dollars", col="green")
 boxplot(recentdata$Gross_Capital, main="Gross Capital Formation", ylab="Percentage of GDP", col="violet")
@@ -110,16 +110,31 @@ boxplot(recentdata$Total_natural, main="Total natural resources rents", ylab="Pe
 boxplot(recentdata$Trade_GDP, main="Trade", ylab="Percentage of GDP", col="maroon")
 boxplot(recentdata$Foreign_direct_investment, main="Foreign direct investment, net inflows", ylab="Percentage of GDP", col="purple")
 ```
+<br>
+**Renewable energy share :** The median is around 25%, lower than the mean of 32.3%, so the distribution is slightly right-skewed. There are no outliers. <br>
+**GDP per capita :** This is the most skewed variable. Half of the countries are below about $6,000, and there are many high outliers above $45,000. <br>
+**Gross capital formation :** The distribution is fairly symmetric around a median of about 23%, with a few outliers, including one negative value (−15.7%).<br>
+**Urban population :** The distribution is fairly even, with a median of about 64% and no outliers. <br>
+**Natural resource rents :** Most countries are close to zero (median around 2%), but there are many high outliers up to 61%. <br>
+**Trade :** The median is around 75%, with a few very high outliers between 220% and 402%. <br>
+**FDI :** Most countries are between 1% and 5%, with several outliers. The y-axis is limited to 0–40, so the most extreme value (413.3%) and negative values are not shown. <br>
+<br>
+
+**Overall Summary :** <br>
+The boxplots support the patterns in Table 1. GDP per capita is the most skewed variable. Half of the countries have a GDP per capita below about $6,000, while many outliers reach over $100,000. Natural resource rents, trade and FDI are also right-skewed, with most countries at low levels and several high outliers. In contrast, urbanisation and gross capital formation are more evenly spread around the median. The renewable energy share has no outliers, but its median (around 25%) is lower than its mean (32.3%), so it is also slightly right-skewed.
+<br>
+<br>
 
 ## Step 2 : Bivariate and Logarithmic OLS ##
 <br>
-We choose to use the Ordinary Least Squares (OLS) regression because it is considered the Best Linear Unbiased Estimator (BLUE). It has a low variance level, it uses the true values of the estimated alpha and beta and on a large sample it will have a precise estimation. 
+We choose to use the Ordinary Least Squares (OLS) regression because it is considered the Best Linear Unbiased Estimator (BLUE).
 
-First, we look at the relationship between Renewable Energy Consumption and GPD per capita. 
-**Table 2**
+First, we look at the relationship between Renewable Energy Consumption and GPD per capita. <br>
+<br>
+**Table 2 : **OLS results for Renewable Energy Consumption and GDP per capita
 ```{r}
-modA1 <- lm(Renewable_energy_consumption ~ GDP_per_capita, data = recentdata)
-stargazer(modA1, type = "text", 
+mod_gdp <- lm(Renewable_energy_consumption ~ GDP_per_capita, data = recentdata)
+stargazer(mod_gdp, type = "text", 
           title ="Table 2: OLS results for Renewable Energy Consumption and GDP per capita")
 ```
 The results show a negative and statistically significant relationship between GDP per capita and the renewable energy share (p < 0.01). The coefficient is −0.0004, so a $10,000 increase in GDP per capita is linked to about a 4 percentage point decrease in the renewable energy share. <br>
@@ -128,60 +143,71 @@ We can infer that countries with higher GDP per capita tend to have lower shares
 <br>
 The R² is 0.093, which means GDP per capita only explains about 9% of the variation across the 165 countries in our sample. So although the result is significant, there are probably other variables that matter more for renewable energy use. <br>
 
-*Model fit : * 
-It is also important to plot the relationship to assess the fit of the model used. 
+**Model Fit**<br>
+<br>
+It is also important to plot the relationship to visually assess the fit of the model used. <br>
+**Scatter Plot**
 ```{r}
 plot(recentdata$GDP_per_capita, recentdata$Renewable_energy_consumption,
      xlab = "GDP per Capita", 
      ylab = "Renewable Energy Consumption",
      main = "Relation between GDP per Capita and Renewable Consumption",
      col="blue")
-abline(modA1, col="red", lwd=2)
+abline(mod_gdp, col="red", lwd=2)
 ```
-<br> *assessment based on look* <br>
 <br>
-Visual assessment is not the most precise so we can check the validation of the linear model assumptions using the R function "gvlma".  
-```{r, fig.width=14, fig.height=3.5, out.width="100%", message=FALSE, warning=FALSE}
-gvlma(modA1)
-plot(check_model(modA1, panel = FALSE))
-```
-*quick model fit analysis*
+In the linear model, most countries are squeezed into the left side of the graph, below about $10,000, while only a few rich countries spread out to the right. Within this small range, the renewable energy share goes all the way from nearly 0% to over 90%, so the straight line cannot show the big change among poorer countries. The line also falls below zero at the highest incomes, which is not possible for a percentage.<br>
+<br>
 
-Now we try using logarithms in the GDP per capita to increase the precision of the model.<br>
-**Table 3**
+Visual assessment is not the most precise so we can check the validation of the linear model assumptions using the R function "gvlma" (Global Validation of Linear Models Assumptions).  
+```{r, fig.width=14, fig.height=3.5, out.width="100%", message=FALSE, warning=FALSE}
+gvlma(mod_gdp)
+plot(check_model(mod_gdp, panel = FALSE))
+```
+<br>
+The global test is highly significant (p-value = 0.000004) which indicates that the model probably does not satisfy the linear model assumptions overall. The skewness test (p-value = 0.000564) and link-function test (p-value = 0.000104) are also significant. This suggests that the **residuals are asymmetric** which indicates that this type of modelling may be inappropriate for this dataset. 
+
+We can try using logarithms in the GDP per capita to increase the precision of the model.<br>
+<br>
+**Table 3 : **OLS results for Renewable Energy Consumption and log(GDP per capita)
 ```{r}
-modA2 <- lm(Renewable_energy_consumption ~ log(GDP_per_capita), data =recentdata)
-stargazer(modA2, type="text", 
+mod_log_gdp <- lm(Renewable_energy_consumption ~ log(GDP_per_capita), data =recentdata)
+stargazer(mod_log_gdp, type="text", 
           title ="Table 3: OLS results for Renewable Energy Consumption and log(GDP per capita)")
 ```
+<br>
 With the log the relationship is still negative and statistically significant (p < 0.01). The coefficient is −11.091, meaning a 1% increase in GDP per capita is linked to about a 0.11 percentage point decrease in the renewable energy share. Since a 1% change is quite small, another way to see it is that when GDP per capita doubles, the renewable energy share is about 7.7 percentage points lower on average. <br>
 <br>
 The R² increases from 0.093 in Table 2 to 0.349, so this model explains about 35% of the variation in the renewable energy share. This is almost four times more than the linear model. We think this is because GDP per capita is very right-skewed (Table 1). The linear model assumes that every extra dollar has the same effect, but the log model looks at percentage changes in GDP instead. This fits the data better, because a small rise in income matters more for poorer countries than for rich ones.
  <br>
 
-Again we can do a visual check
+Again we can do a visual check with a scatter plot : 
 ```{r}
 plot(log(recentdata$GDP_per_capita), recentdata$Renewable_energy_consumption,
      xlab = "log(GDP per Capita)", 
      ylab = "Renewable Energy Consumption",
      main = "Relation between log(GDP per Capita) and Energy Consumption",
      col="blue")
-abline(modA2, col="red", lwd=2)
+abline(mod_log_gdp, col="red", lwd=2)
 ```
-*model fit analysis*
+<br>
+After taking the log, the countries are spread out much more evenly, and the downward trend is easier to see. Almost all countries with a renewable energy share above 70% are at the low-income end. However, the points are still widely scattered around the line, and a few rich countries have much higher shares than the model predicts. This matches the model fit results, where the relationship is still not completely linear.<br>
+<br>
 
-And again, we check the validation of the linear model assumptions for this case.
+And again, we check the validation of the linear model assumptions to better understand the fit of the model.
 ```{r, fig.width=14, fig.height=3.5, out.width="100%", message=FALSE, warning=FALSE}
-gvlma(modA2)
-plot(check_model(modA2, panel = FALSE))
+gvlma(mod_log_gdp)
+plot(check_model(mod_log_gdp, panel = FALSE))
 ```
-*model fit analysis*
-
-We are going to check the relationship with other variables
-**Table 4**
+<br>
+Using the log function highly improves the model's ability to describe, and clarify the relationship between GDP per capita and usage of renewable energy it does not influence the linear assumptions which remain significantly **unsatisfied**. 
+<br>
+<br>
+**Renewable Energy Consumption and Gross Capital Formation** <br>
+**Table 4 : ***OLS results for Renewable Energy Consumption and Gross Capital Formation*
 ```{r}
-modA3 <- lm(Renewable_energy_consumption ~ Gross_Capital, data = recentdata)
-stargazer(modA3, type="text", 
+mod_gross_capital <- lm(Renewable_energy_consumption ~ Gross_Capital, data = recentdata)
+stargazer(mod_gross_capital, type="text", 
           title ="Table 4: OLS results for Renewable Energy Consumption and Gross Capital Formation")
 ```
 Gross capital formation has no significant relationship with the renewable energy share (p > 0.1). The coefficient is very close to zero (−0.058), and the R² is only 0.0003, so investment explains almost none of the differences between countries. <br>
@@ -193,131 +219,167 @@ plot(recentdata$Gross_Capital, recentdata$Renewable_energy_consumption,
      ylab = "Renewable Energy Consumption",
      main = "Relation between Gross Capital Formation and Renewable Consumption",
      col="blue")
-abline(modA3, col="red", lwd=2)
+abline(mod_gross_capital, col="red", lwd=2)
 ```
+<br>
+The regression line is almost flat. At every level of investment, from about 10% to 40% of GDP, the renewable energy share ranges from nearly 0% to over 90%, so there is no clear pattern. There is also one outlier with negative gross capital formation (around −15.7%).<br>
+<br>
 
-And even go further with the assumtion check with the "gvlma" function. 
+**Model Fit**
 ```{r, fig.width=14, fig.height=3.5, out.width="100%", message=FALSE, warning=FALSE}
-gvlma(modA3)
-plot(check_model(modA3, panel = FALSE))
+gvlma(mod_gross_capital)
+plot(check_model(mod_gross_capital, panel = FALSE))
 ```
-
-**Table 5 : ** *urban population* <br>
+<br>
+The skewness test is significant (p-value = 0.000088), indicating a problem with the symmetry of the residual distribution. However, the kurtosis (p-value = 0.138), link-function (p-value = 0.884) and heteroscedasticity (p-value = 0.396) tests are not significant. This means that **skewness** is the main issue identified by the individual tests. <br>
+<br>
+**Renewable Energy Consumption and Urban Population** <br>
+<br>
+**Table 5 : ** *OLS results for Renewable Energy Consumption and Urban Population*
 ```{r}
-modA4 <- lm(Renewable_energy_consumption ~ Urban_pop, data = recentdata)
-stargazer(modA4, type="text", 
+mod_urban_pop <- lm(Renewable_energy_consumption ~ Urban_pop, data = recentdata)
+stargazer(mod_urban_pop, type="text", 
           title ="Table 5: OLS results for Renewable Energy Consumption and Urban Population")
 ```
 <br>
 Urban population has a negative and statistically significant relationship with the renewable energy share (p < 0.01). The coefficient is −0.607, so a 10 percentage point increase in the urban population share is linked to about a 6 percentage point decrease in the renewable energy share. The R² is 0.239, which means urbanisation explains about 24% of the variation. This makes it the strongest variable after GDP per capita. One reason could be that people in cities rely less on firewood and more on electricity and fossil fuels (Barnes, Krutilla and Hyde, 2004, p. 27). <br>
 
+
+**Scatter Plot**
 ```{r}
 plot(recentdata$Urban_pop, recentdata$Renewable_energy_consumption,
      xlab = "Urban Population (% of total)", 
      ylab = "Renewable Energy Consumption",
      main = "Relation between Urban Population and Renewable Consumption",
      col="blue")
-abline(modA4, col="red", lwd=2)
+abline(mod_urban_pop, col="red", lwd=2)
 ```
+The scatter plot shows a downward trend, but the points are widely spread. Countries with low urbanisation have very different renewable energy shares, from almost 0% to over 90%, while countries that are close to 100% urban mostly have shares near zero. <br>
+<br>
 
-We check the validation of the linear model assumptions for this case
+**Model Fit**
 ```{r, fig.width=14, fig.height=3.5, out.width="100%", message=FALSE, warning=FALSE}
-gvlma(modA4)
-plot(check_model(modA4, panel = FALSE))
+gvlma(mod_urban_pop)
+plot(check_model(mod_urban_pop, panel = FALSE))
 ```
+<br>
+The skewness test is significant (p-value = 0.000666), suggesting asymmetric residuals like the previous instance. In contrast, heteroscedasticity (p-value = 0.168) are all acceptable at the 5% level. Therefore, the main issue identified by the function is **residual skewness** rather than heteroscedasticity.
+<br>
 
 **Table 6 : ***log of urban pop*
-
 ```{r}
-modA5<-lm(Renewable_energy_consumption ~ log(Urban_pop), data =recentdata)
-stargazer(modA5, type="text", 
+mod_log_urban_pop<-lm(Renewable_energy_consumption ~ log(Urban_pop), data =recentdata)
+stargazer(mod_log_urban_pop, type="text", 
           title ="Table 6: OLS results for Renewable Energy Consumption and log(Urban Population)")
 ```
 Taking the log of urban population does not improve the model. The relationship is still negative and statistically significant (p < 0.01), with a coefficient of −30.855. This means a 1% increase in the urban population share is linked to about a 0.31 percentage point decrease in the renewable energy share. However, the R² drops slightly from 0.239 in Table 5 to 0.232. This is probably because the urban population is already fairly evenly spread (Table 1), so it does not need a log transformation like GDP does.
 <br>
 <br>
-**Table 7 :***Renewable Energy Consumption and Natural Resources availability*
+**Renewable Energy Consumption and Total Natural Resources** <br>
+<br>
+**Table 7 :**OLS results for Renewable Energy Consumption and Total Natural Resources
 ```{r}
-modA6 <- lm(Renewable_energy_consumption ~ Total_natural, data = recentdata)
-stargazer(modA6, type="text", 
+mod_nat_resources <- lm(Renewable_energy_consumption ~ Total_natural, data = recentdata)
+stargazer(mod_nat_resources, type="text", 
           title ="Table 7: OLS results for Renewable Energy Consumption and Total Natural Resources")
 ```
 Natural resource rents have no significant relationship with the renewable energy share (p > 0.1). The coefficient is very close to zero (0.041), and the R² is only 0.0003, so this variable explains almost none of the differences between countries.
 <br>
 
-#There is no significant relationship between those two variables
 
+**Scatter Plot**
 ```{r}
 plot(recentdata$Total_natural, recentdata$Renewable_energy_consumption,
      xlab = "Total Natural Resources (% of GDP)", 
      ylab = "Renewable Energy Consumption",
      main = "Relation between Total Natural Resources and Renewable Consumption",
      col="blue")
-abline(modA6, col="red", lwd=2)
+abline(mod_nat_resources, col="red", lwd=2)
 ```
+<br>
+Most countries have natural resource rents below 10% of GDP, and their renewable shares are spread across the full range. The line is almost flat. Among the few countries with high resource rents (above 15%), some have renewable shares close to 0%, while others have shares above 70%, so they do not follow one clear direction. <br>
+<br>
 
-#We check the validation of the linear model assumptions for this case
 ```{r, fig.width=14, fig.height=3.5, out.width="100%", message=FALSE, warning=FALSE}
-gvlma(modA6)
-plot(check_model(modA6, panel = FALSE))
+gvlma(mod_nat_resources)
+plot(check_model(mod_nat_resources, panel = FALSE))
 ```
-
-**Table 8 : ***Renewable Energt Consumption and Trade*
+<br>
+The problem here with the model is the skewdness of residuals again.
+<br>
+**Renewable Energy Consumption and Trade as % of GDP**<br>
+<br>
+**Table 8 : **OLS results for Renewable Energy Consumption and Trade as % of GDP
 ```{r}
-modA7 <- lm(Renewable_energy_consumption ~ Trade_GDP, data = recentdata)
-stargazer(modA7, type="text", 
+mod_trade <- lm(Renewable_energy_consumption ~ Trade_GDP, data = recentdata)
+stargazer(mod_trade, type="text", 
           title ="Table 8: OLS results for Renewable Energy Consumption and Trade as % of GDP")
 ```
 Trade openness has a negative and statistically significant relationship with the renewable energy share (p < 0.01). The coefficient is −0.143, so a 10 percentage point increase in trade as a share of GDP is linked to about a 1.4 percentage point decrease in the renewable energy share. However, the R² is only 0.100, so trade explains about 10% of the variation, which is much weaker than GDP per capita or urbanisation.
-
+<br>
+<br>
+**Scatter Plot**
 ```{r}
 plot(recentdata$Trade_GDP, recentdata$Renewable_energy_consumption,
      xlab = "Total Trade (% of GDP)", 
      ylab = "Renewable Energy Consumption",
      main = "Relation between Total Trade and Renewable Consumption",
      col="blue")
-abline(modA7, col="red", lwd=2)
+abline(mod_trade, col="red", lwd=2)
 ```
+<br>
+Most countries have trade between about 25% and 150% of GDP. Countries with very high renewable shares are mostly at the lower end of trade. A few countries with extremely high trade (above 300% of GDP) have very low renewable shares, and they pull the line down. The line also falls below zero at the highest trade levels. <br>
+<br>
 
-We check the validation of the linear model assumptions for this case
+**Model Fit**
 ```{r, fig.width=14, fig.height=3.5, out.width="100%", message=FALSE, warning=FALSE}
-gvlma(modA7)
-plot(check_model(modA7, panel = FALSE))
+gvlma(mod_trade)
+plot(check_model(mod_trade, panel = FALSE))
 ```
+<br>
+The skewness test is significant (p-value = 0.00338), indicating asymmetric residuals. However, kurtosis (p-value = 0.0978), link function (p-value = 0.0618) and heteroscedasticity (p-value = 0.515) are not significant at the 5% level. The link-function p-value is relatively close to the 5% threshold, but it does not constitute a statistically significant violation at this level. Therefore, **skewness** is the main issue identified.
 
 We try using logarithms in this case <br>
 **Table 9 :***Renewable Energy Consumption and log of trade*
 ```{r}
-modA8 <-lm(Renewable_energy_consumption ~ log(Trade_GDP), data =recentdata)
-stargazer(modA8, type="text", 
+mod_log_trade <-lm(Renewable_energy_consumption ~ log(Trade_GDP), data =recentdata)
+stargazer(mod_log_trade, type="text", 
           title ="Table 9: OLS results for Renewable Energy Consumption and log(Trade as % of GDP)")
 ```
 Using the log of trade improves the model slightly. The relationship is still negative and statistically significant (p < 0.01), with a coefficient of −15.636. This means a 1% increase in trade is linked to about a 0.16 percentage point decrease in the renewable energy share. The R² increases from 0.100 in Table 8 to 0.117. This makes sense because trade is right-skewed (Table 1), but the improvement is small, and trade still explains much less of the variation than GDP per capita or urbanisation.
 <br>
 
+**Scatter Plot**
 ```{r}
 plot(log(recentdata$Trade_GDP), recentdata$Renewable_energy_consumption,
      xlab = "log(Total Trade as % of GDP)", 
      ylab = "Renewable Energy Consumption",
      main = "Relation between log(Total Trade) and Renewable Consumption",
      col="blue")
-abline(modA8, col="red", lwd=2)
+abline(mod_log_trade, col="red", lwd=2)
 ```
+<br>
+After taking the log, countries are spread out more evenly, and the very high trade countries no longer pull the line as much. However, there is now one country on the far left with very low trade and a high renewable share, which has a strong effect on the left end of the line. The points are still widely scattered, which explains why the R² is only slightly higher. <br>
+<br>
 
-We check the validation of the linear model assumptions for this case
+**Model Fit**
 ```{r, fig.width=14, fig.height=3.5, out.width="100%", message=FALSE, warning=FALSE}
-gvlma(modA8)
-plot(check_model(modA8, panel = FALSE))
+gvlma(mod_log_trade)
+plot(check_model(mod_log_trade, panel = FALSE))
 ```
-
-**Table 10 :*** Renewable Energy Consumption and Foreign direct investment*
+<br>
+The global test is significant, meaning that the model still does not satisfy all the assumptions jointly. The skewness test remains significant (p-value = 0.00377), while kurtosis (p-value = 0.194), link function (p-value = 0.531) and heteroscedasticity (p = 0.605) are acceptable. Compared with the model using untransformed trade, the logarithmic transformation improves the link-function result. However, the skewness problem remains, and the global test still rejects the overall assumptions.
+<br>
+**Renewable Energy Consumption and Foreign direct investment**<br>
+<br>
+**Table 10 :** OLS results for Renewable Energy Consumption and Foreign direct investment
 ```{r}
-modA9 <- lm(Renewable_energy_consumption ~ Foreign_direct_investment, data = recentdata)
-summary(modA9)
-stargazer(modA9, type="text", 
+mod_foreign_investment <- lm(Renewable_energy_consumption ~ Foreign_direct_investment, data = recentdata)
+summary(mod_foreign_investment)
+stargazer(mod_foreign_investment, type="text", 
           title ="Table 10: OLS results for Renewable Energy Consumption and Foreign direct investment")
 ```
-FDI has no significant relationship with the renewable energy share (p > 0.1). The coefficient is close to zero (−0.072), and the R² is only 0.008, so FDI explains less than 1% of the variation between countries. As shown in Table 1, FDI has one extreme value of 413.3% of GDP, which may also affect this result.<br>
+FDI has no significant relationship with the renewable energy share (p > 0.1). The coefficient is close to zero (−0.072), and the R² is only 0.008, so FDI explains less than 1% of the variation between countries.<br>
 
 ```{r}
 plot(recentdata$Foreign_direct_investment, recentdata$Renewable_energy_consumption,
@@ -325,14 +387,20 @@ plot(recentdata$Foreign_direct_investment, recentdata$Renewable_energy_consumpti
      ylab = "Renewable Energy Consumption",
      main = "Relation between Foreign direct investment and Renewable Consumption",
      col="blue")
-abline(modA9, col="red", lwd=2)
+abline(mod_foreign_investment, col="red", lwd=2)
 ```
+<br>
+To see how much the FDI outlier affects the result, we plotted the FDI model again without the country with FDI of 413.3% of GDP. Without this point, the countries are spread across a much smaller range, and there is still no clear pattern between FDI and the renewable energy share. This suggests that the trend in the original plot was mainly caused by this one outlier.
+<br>
 
-We check the validation of the linear model assumptions for this case
+**Model Fit**
 ```{r, fig.width=14, fig.height=3.5, out.width="100%", message=FALSE, warning=FALSE}
-gvlma(modA9)
-plot(check_model(modA9, panel = FALSE))
+gvlma(mod_foreign_investment)
+plot(check_model(mod_foreign_investment, panel = FALSE))
 ```
+<br>
+Skewness is still the main issue identified by the validation test. Although, the model has very little explanatory power.
+<br>
 
 ## Step 3 : Multivariable models and model selection ##
 
@@ -355,21 +423,42 @@ Urbanisation and trade were both significant on their own (Tables 5 and 9), but 
 <br>
 The model as a whole is significant (F = 15.77, p < 0.01). The R² is 0.374, but the adjusted R² is 0.351, only slightly higher than 0.345 for the log GDP model in Table 3. This means adding five more variables barely improves how well the model explains the renewable energy share. <br>
 
-We check the validation of the linear model assumptions for this case
+**Model Fit**
 ```{r, fig.width=14, fig.height=3.5, out.width="100%", message=FALSE, warning=FALSE}
 gvlma(mod_multiple)
 plot(check_model(mod_multiple, panel = FALSE))
 ```
+<br>
+The global test is highly significant (p-value = 0.00000145) which shows that the multiple regression does not satisfy the assumptions jointly. The skewness test (p-value = 0.000576) is significant, suggesting asymmetric residuals. The kurtosis (p-value = 0.344) and heteroscedasticity (p-value = 0.662) tests are not significant. Therefore, despite having the highest R² among our models, the multiple regression model still presents some assumption violations.
 
-We are going to compare the models we have
+Comparing the models we have 
 ```{r}
-model_comparison <- compare_performance(modA1, modA2, modA3, modA4, modA5, modA6,
-                                        modA7, modA8, modA9, mod_multiple, rank = TRUE)
+model_comparison <- compare_performance(mod_gdp, mod_log_gdp, mod_gross_capital, mod_urban_pop, mod_log_urban_pop, mod_nat_resources,
+                                        mod_trade, mod_log_trade, mod_foreign_investment, mod_multiple, rank = TRUE)
 print_md(model_comparison)
+```
+<br>
+To choose our final model, we compared all ten models using R², adjusted R², RMSE, AIC and BIC. The log GDP model ranked first, with a performance score of 97.4%, followed by the multivariable model (61.7%) and the urbanisation model (36.7%). The models for gross capital formation, natural resource rents and FDI ranked last, with scores close to 0%. <br>
+<br>
+The multivariable model has a slightly higher adjusted R² than the log GDP model (0.351 compared with 0.345), but AIC and BIC both penalise models with more variables. Since adding five extra variables only improves the fit a little, the simpler log GDP model is preferred. <br>
+<br>
+Even so, the log GDP model has an RMSE of about 21.7, which means its predictions are still off by around 22 percentage points on average. So GDP explains an important part of the differences between countries, but about 65% of the variation remains unexplained.<br>
+<br>
+**Radar Chart**
+```{r}
 par(mfrow = c(1, 1))
 plot(model_comparison)
 ```
-
-The best model is modA2 
+<br>
+The radar chart shows the same comparison visually. Each axis is one performance measure, and points further from the centre mean better performance. The log GDP model has the largest area and performs well on every measure, so it fits the data best overall. The multivariable model does about as well on R², adjusted R², RMSE and sigma, but it is close to zero on the AIC and BIC weights, which shows that its extra variables are not worth the added complexity. Among the other single variable models, urbanisation performs best, followed by trade and linear GDP. The models for gross capital formation, natural resource rents and FDI stay close to the centre on every measure, so they fit the data worst.
 
 ## Conclusion ##
+<br>
+<br>
+**On Model Fits**
+The "gvlma()" results show that all nine models for which we have test results fail the global validation test at the 5% significance level. The most consistent problem is skewness : every model has a significant skewness test. This suggests that the residual distributions are not sufficiently symmetric.
+
+The log GDP model, which performs best among the simple regressions in terms of explanatory power, still fails the global validation test. Similarly, the multiple regression has a higher R² but also fails the global test. Therefore, we learned that we should not select a model based only on R², adjusted R² or statistical significance.
+
+Overall, the log GDP model remains a useful choice for a relatively simple description of the relationship between income and renewable energy consumption, but its results must be interpreted with caution because the assumptions are not fully satisfied. Further investigation of the residual distribution and functional form would be necessary before relying strongly on conventional OLS inference. These tests also do not assess every possible regression concern, such as independence of observations or omitted-variable bias ; which show up only in an in-depth analysis. 
+

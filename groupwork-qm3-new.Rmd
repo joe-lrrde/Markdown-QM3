@@ -23,14 +23,92 @@ library(performance)
 # *Research Question*
 
 ## Introduction ## 
-
 <br>
+The switch to renewable energies is a pressing global concern, given rising temperatures, climate change disasters and geopolitical instability, which all result, directly or indirectly, from reliance on fossil fuels and the consequent release of greenhouse gases (Renewable Energy Institute, 2025). <br>
+<br>
+ 
+Thus it is an important endeavour to analyse the factors which affect countries' disposition to increase their share of renewable energies. This allows policymakers to determine where policy and regulation can act to promote a higher share of renewable energy use. However, drivers of global adoption are varied and the evidence on their effect is mixed (Osińska et al., 2024). Given the scope of this project, economic factors were selected as a focus, as these are well defined and consistently measured across countries. However, it is noted that the true relationships are much more complex and also include a range of social, institutional, cultural and geographical factors (Osińska et al., 2024). <br>
+<br>
+ 
+A quick visual inspection of the global distribution of the share of renewable energies in final energy consumption illustrates this complexity. <br>
 <br>
 
-## Literature Review ## 
+![](fig1.png)
+ 
+ 
+<br>
+Figure 1: World map showing share of renewable energy in final energy use in 2021 (Our World in Data, 2026) <br>
+<br>
+ 
+At first glance, this does not clearly show any patterns regarding wealth, which would be expected given the substantial upfront costs of installing renewable energies (International Energy Agency, 2024). However, high-income countries across Europe and North America derive only a minority of their final energy use from renewable sources, while lower-income countries in Central and East Africa report renewable energy shares of up to 100%. This reflects that there are a variety of other factors at play, some of which will be attempted to be laid out in the following. <br>
 <br>
 
-## Methodology ## 
+This project therefore asks:<br>
+<br>
+ 
+To what extent are economic factors associated with the share of renewable energy in final energy consumption across countries in 2021? <br>
+<br>
+ 
+More specifically, it will be examined how gross domestic product (GDP) per capita, gross capital formation, trade openness, foreign direct investment and natural resource rents are associated with the renewable share of final energy consumption. <br>
+<br>
+ 
+World Bank data for 164 countries from the year 2021 is used, as this is the most complete and current global dataset. Relationships are estimated using ordinary least squares (OLS) regression. This is an appropriate choice of method, as the dependent variable (share of renewable energy in final energy use) is continuous and the aim is to estimate the associate of several economic factors with this variable, while holding the others constant, which allows the separate contribution of each factor to be assessed. <br>
+<br>
+
+## Literature Review & Variable Choice ## 
+There has been a substantial amount of research on factors influencing renewable energy consumption (REC), examining financial, political, economic and environmental factors, such as income, energy security, trade, energy prices and regulatory systems (Osińska et al., 2024). However, studies vary considerably with the countries studied, the time period and the method, and thus findings are often inconsistent. For example, it has been shown that trade between EU-15 countries results in an increase in REC, whereas trade openness is negatively correlated with REC in Sub-Saharan Africa (ibid.). Similarly, Osińska et al. (2024), mentions several studies where income has been found to positively impact REC, whereas negative associations have been reported in other studies (Wu et al., 2022). Evidence on international capital flows and resource wealth is similarly divided, with the effects of foreign direct investment and natural resource rents found to vary by sector and type of resource (Doytch & Narayan, 2016; Wang et al., 2023). Given these inconsistencies, this project re-examines a focused set of economic factors, including GDP per capita, gross capital formation, trade openness, foreign direct investment and natural resource rents within a single time frame, across the globe. <br>
+ <br>
+**GDP per capita**
+<br>
+ 
+GDP per capita is chosen as the primary measure of a country's wealth and economic development. This is expected to be closely associated with REC, due to countries' differing ability to finance the energy transition. Higher-income countries may be more able to raise the necessary money for the high upfront costs of installing renewable energy technology (Ergun & Rivas, 2023). Furthermore, these countries face less pressure to direct public spending towards basic needs, leaving more resources available for investment in energy infrastructure (ibid.). Lastly, once citizen's basic needs are met, they are more likely to place greater value on environmental issues and are thus more willing to adopt and invest in renewable energy (ibid.). <br>
+Therefore, it would be expected that GDP per capita is positively associated with REC. However, the evidence on this relationship is mixed. <br>
+ <br>
+A heterogeneous panel regression conducted on developed countries concluded that income levels support REC (Shahzad et al., 2021), while an analysis on specifically G7 countries found a negative relationship between economic growth and REC (Wu et al., 2022). In contrast to these linear relationships, a generalised least squares analysis on emerging Asian countries found a U-shaped relationship between GDP per capita and REC (Ergun & Rivas, 2023). <br>
+ <br>
+These findings indicate that a simple linear relationship between income and REC is unlikely across the global sample used. GDP per capita is therefore log-transformed for the following regression analysis, to account for the strong right skew of this data and reduce the influence of wealthy outliers. Subsequent residual diagnostics will determine if the transformed relationship is adequately linear. It is also possible that reverse causality is a possibility, where an increase in renewable energy shares drives economic growth (Osińska et al., 2024). Since the OLS regression cannot separate these directions, the GDP coefficient is interpreted as an association only. <br>
+ <br>
+ 
+**Gross Capital Formation** <br>
+ <br>
+Gross Capital Formation (as a % of GDP) is used as a measure of a country's investment rate and, by extension, its capacity to finance renewable energy technology and infrastructure. Specifically, it refers to the expenditure on acquisitions of produced or fixed assets, such as infrastructure and equipment (OECD, 2025). It is expressed as a share of GDP, so that economies of different scales can be compared. Gross capital formation is included because it is expected to impact REC, due to the aforementioned high capital intensity of installing renewable energies (International Energy Agency, 2024). Countries that invest a higher share of their output, are expected to have a more developed infrastructure, which in turn would allow for a quicker adoption of renewable energies. They would also be expected to be better positioned to build new infrastructure for renewable energy adoption (Ergun & Rivas, 2023). However, since this measure captures all forms of investment rather than being energy-specific, it has to be interpreted with caution. <br>
+ <br>
+As with GDP per capita, previous evidence on the effect of this variable on REC is mixed, with a study of Southern African nations suggesting a negative relationship between gross capital formation and REC (Aidoo, 2024), whereas other empirical studies have found a positive effect of gross capital formation on REC (Ergun & Rivas, 2023). <br>
+ <br>
+
+
+**Natural Resource Rents** <br>
+<br>
+Total natural resource rents (as a % of GDP) are used as a measure of a country’s natural resource wealth, estimating the value of oil, natural gas, coal, mineral and forest production at world prices, minus the costs of production (World Bank, 2016). <br>
+<br>
+Natural resource rents are relevant to this analysis due to the apparent “resource curse,” whereby resource-abundant economies tend to grow slower than resource-poor ones (Sachs & Warner, 2001). The same dependence on resource revenues that holds back growth may also slow the energy transition, as revenues from fossil fuels may reduce the incentive to diversify the energy mix and strengthen the position of incumbent energy industries, which would be expected to lower renewable energy consumption. Whether natural resources become a curse depends largely on the quality of a country’s institutions (Mehlum et al., 2006). <br>
+<br>
+Evidence on the relationship between resource rents and renewable energy consumption is more limited than for the other variables and appears to vary by type of resource. A study analysing global data from 1988 to 2021 found that natural gas and mineral rents weakened renewable energy consumption, whilst oil rents had a positive effect (Wang et al., 2023). This suggests that the components of total resource rents may work in opposite directions, so that a single coefficient could conceal opposing relationships. <br>
+<br>
+The composition of the measure reinforces this concern. Total natural resource rents combine fossil fuel rents with forest rents, and forest rents rise with fuelwood harvesting. Since traditional biomass such as fuelwood is counted as renewable energy (IEA, 2024), countries with high forest rents may record high renewable shares for reasons unrelated to clean energy investment, which is why Sub-Saharan Africa has the highest renewable share of any region, thus reflecting energy poverty as much as clean energy investment. Results for this variable must therfore be treated as indicative, and disaggregating rents into fossil fuels and forest components would allow this to be tested directly. <br>
+<br>
+**Foreign Direct Investment**<br>
+<br>
+Foreign direct investment (FDI) is measured as net inflows as a % of GDP, referring to investment that gives a foreign investor a lasting interest in a domestic enterprise, defined as at least 10% of voting stock, and is compiled from balance-of-payments data (World Bank, 2026). <br>
+<br>
+FDI is selected as a variable because it is a primary channel through which foreign capital and technology can enter an economy, both of which are required for the transition to renewable energy. Wind and solar installations are capital-intensive, and much of the technical expertise behind them originates from abroad. Countries attracting higher levels of foreign investment may therefore be expected to adopt renewable energy more quickly, as multinationals transfer cleaner technology and management practices to host countries. This is known as the pollution halo hypothesis. By contrast, under the pollution haven hypothesis, firms relocate energy-intensive production to countries with weaker environmental regulation, which would be expected to lower renewable energy consumption (Eskeland & Harrison, 2003). <br>
+<br>
+Official FDI statistics blur the line between financial and physical investment, with funds channelled through holding companies counted in the same way as investment in factories or energy infrastructure. Damgaard et al. (2019) estimate that almost 40% of global FDI consists of succh investment in corporate shells. Since these flows have little connection to the host country’s actual economy, FDI figures may overstate the foreign capital available for renewable energy; therefore, the measure must be interpreted with caution. <br>
+<br>
+Previous evidence on the effect of FDI on renewable energy consumption is inconclusive. A study of manufacturing plants in Côte d’Ivoire, Mexico, Morocco and Venezuela found that foreign-owned firms are more energy-efficient and use cleaner types of energy than their domestic counterparts, consistent with the halo hypothesis (Eskeland & Harrison, 2003), whereas a study of 74 countries from 1985-2012 found that FDI tends to increase renewable energy consumption, although the size of the effect varies considerably by sector. In addition, a study of selected ASEAN countries found that FDI and governance quality increase renewable energy, while trade openness reduces it (Huang et al., 2022). Nguyen et al. (2026) identify a conditional halo effect in 50 developing countries: FDI is associated with higher emissions, but this reverses where renewable energy use is higher, suggesting that FDI’s environmental effect depends on the host’s energy mix instead of its volume. <br>
+<br>
+Since countries expanding their renewable capacity may themselves attract foreign investment, there is the possibility of reverse causality. Because OLS regression cannot distinguish between these directions, the FDI coefficient should only be interpreted as an association. <br>
+<br>
+
+**Trade Openness**<br>
+<br>
+Trade (as a % of GDP) is used as a measure of a country’s integration into international markets, referring to the sum of imports and exports of goods and services, and expressed as a share of GDP so that economies of different sizes can be compared (World Bank, 2026). <br>
+<br>
+Trade openness is expected to affect renewable energy consumption through three channels: the scale of economic activity; the composition of output; and the technology used in production (Grossman & Krueger. 1991). Through the scale effect, greater output raises total energy demand, which may be met largely by fossil fuels. Trade also alters the composition of output, as countries specialise according to their comparative advantage; depending on where that advantage lies, production may shift towards or away from an energy-intensive industry. Finally, openness can change the techniques of production by giving countries easier access to imported renewable energy technology, such as wind turbines and solar panels (Omri & Nguyen, 2014). However, since the ratio is mechanically higher for small re-exporting economies, it partly reflects country size rather than openness alone (Squalli & Wilson, 2011). <br>
+<br>
+Empirical evidence on trade openness and renewable energy consumption is extensive, but inconsistent. Using system GMM estimation on a panel of 64 countries between 1990 and 2011, Omri & Nguyen (2014) found trade openness to be one of the main drivers of renewable energy consumption. Because this method accounts for the persistence of national energy systems and for unobserved energy characteristics, it offers stronger grounds for inference than a single cross-section. Omri et al. (2015) obtained similar results using pooled OLS, fixed effects and random effects models, suggesting that the finding does not depend on the estimation method. In both studies, the proposed mechanism is technology transfer, whereby open economies gain access to infrastructure such as wind turbines and solar panels, alongside technical expertise. <br>
+<br>
+More recent studies, however, indicate that the effect of trade depends on a country’s level of development. Covering 186 countries over 1990-2015, Wang & Zhang (2021) found that trade raises renewable energy consumption in high- and upper-middle-income countries, but not in poorer countries, while Zhang et al. (2021) identified a strongly nonlinear relationship across 35 OECD countries. Murshed (2020) reported that greater openness increases the renewable share in low-income countries but reduces it in lower-middle-income economies, and Huag et al. (2022) found a negative effect in selected ASEAN economies, where trade expands energy-intensive industry. Institutions also appear to matter, as trade openness has been found to slow renewable deployment in less democratic countries (Chen et al., 2021). Taken together, these findings suggest that the relationship between renewable energy consumption and trade is unlikely to be uniform across a global sample. <br>
 <br>
 
 ## Step 1 : Loading Data ## 
@@ -96,7 +174,7 @@ recentdata <-na.omit(recentdata)
 stargazer(recentdata, type="text", digits=1,
           title ="Table 1: Summary Statistics of the Variables (2021)")
 ```
-Table 1 summarises the complete data for 165 countries in 2021.
+Table 1 summarises the complete data for 164 countries in 2021.
 <br>
 The renewable energy share is very different from country to country, from 0% to 96.3% of total final energy consumption, with a mean of 32.3% and a standard deviation of 26.9. GDP per capita is heavily right-skewed, as its standard deviation (US$21,505) is bigger than its mean (US$15,522), and the richest country’s income is around 280 times that of the poorest. Most countries are at the lower end of the income distribution, which is why we use log GDP per capita in Table 3. <br>
 For the other variables, urbanisation is fairly evenly spread (16.5% to 100%), and gross capital formation varies less than the others, with an average of 23.9% of GDP. Trade openness and natural resource rents are also right-skewed. Most countries are at middle levels, but a few small states are much higher than the rest. FDI has an extreme outlier of 413.3% of GDP, while the mean is only 6.6%. The negative minimum for gross capital formation (−15.7%) is a bit unusual and may be a data issue.<br>
@@ -141,7 +219,7 @@ The results show a negative and statistically significant relationship between G
 <br> 
 We can infer that countries with higher GDP per capita tend to have lower shares of renewable energy on average. This is likely because the data includes traditional biomass like firewood, which is common in poorer countries. As countries get richer, households tend to shift from firewood to fossil fuels and electricity (Leach, 1992, p. 116).
 <br>
-The R² is 0.093, which means GDP per capita only explains about 9% of the variation across the 165 countries in our sample. So although the result is significant, there are probably other variables that matter more for renewable energy use. <br>
+The R² is 0.093, which means GDP per capita only explains about 9% of the variation across the 164 countries in our sample. So although the result is significant, there are probably other variables that matter more for renewable energy use. <br>
 
 **Model Fit**<br>
 <br>
@@ -254,6 +332,7 @@ plot(recentdata$Urban_pop, recentdata$Renewable_energy_consumption,
      col="blue")
 abline(mod_urban_pop, col="red", lwd=2)
 ```
+<br>
 The scatter plot shows a downward trend, but the points are widely spread. Countries with low urbanisation have very different renewable energy shares, from almost 0% to over 90%, while countries that are close to 100% urban mostly have shares near zero. <br>
 <br>
 
@@ -454,11 +533,49 @@ The radar chart shows the same comparison visually. Each axis is one performance
 
 ## Conclusion ##
 <br>
-<br>
 **On Model Fits**
 The "gvlma()" results show that all nine models for which we have test results fail the global validation test at the 5% significance level. The most consistent problem is skewness : every model has a significant skewness test. This suggests that the residual distributions are not sufficiently symmetric.
 
 The log GDP model, which performs best among the simple regressions in terms of explanatory power, still fails the global validation test. Similarly, the multiple regression has a higher R² but also fails the global test. Therefore, we learned that we should not select a model based only on R², adjusted R² or statistical significance.
 
 Overall, the log GDP model remains a useful choice for a relatively simple description of the relationship between income and renewable energy consumption, but its results must be interpreted with caution because the assumptions are not fully satisfied. Further investigation of the residual distribution and functional form would be necessary before relying strongly on conventional OLS inference. These tests also do not assess every possible regression concern, such as independence of observations or omitted-variable bias ; which show up only in an in-depth analysis. 
+<br>
+<br>
+**Limitations** 
+<br>
+A large limitation of this analysis is that all countries were pooled into a single cross-sectional model, regardless of income and development status. This assumes that the association between economic factors and renewable energy use is the same in every country across the world, which does not reflect the true complexity of the interactions between development, investment and resource use. In fact, the inconsistent findings across previous research may be partly explained by the fact that studies have focused on different groups of countries. Osińska et al. (2024) illustrate a more robust approach, where countries are disaggregated according to the Human Development Index. They find that the determinants of renewable energy consumption differ substantially between groups of countries that are at different levels of human development. The results from this analysis therefore represent average associations across a highly diverse sample, which may hide more complex relationships within the sample. Therefore, following Osińska et al. (2024), future models should group countries by income level, Human Development Index or similar development indicators, in order to analyse finer variations within these groups. <br>
+ <br>
+Furthermore, because the analysis uses data from only one year, the results only indicate association and no conclusions regarding causal links can be drawn. Time lags also cannot be captured, which may be an issue for the explanatory power of gross capital formation, as investment in new renewable capacity may take some time to affect energy consumption. Thus, in order to evaluate effects over time, as well as lagged impacts, future research could use panel data spanning several years. <br>
+ <br>
+In addition, the measurement of the dependent variable is problematic, due to the nature of the available dataset. The World Bank's share of renewable energy in final energy consumption counts biofuels such as charcoal and wood as renewable energy (World Bank, 2015). In many developing countries these fuels account for a large share of final energy consumption, and thus the share of renewable energy used in these countries may be inflated (International Energy Agency, 2026). It is thus more likely to reflect energy poverty than progress towards a sustainable energy transition. Future research should therefore assure that the dependent variable is restricted to modern renewables such as solar, wind, hydropower and geothermal energy. <br>
+ <br>
+Lastly, future research could examine the interaction of socio-cultural factors, such as environmental awareness, with the economic factors studied here, to give a more complete picture of the drivers behind renewable energy adoption. <br>
+<br>
+2021 year falls in the post-COVID recovery, where trade volumes and FDI flows were still volatile, and commodity prices were rising from their 2020 lows. Thus, resource rents in 2021 may differ from their long-run levels. <br>
+
+**References** <br>
+<br>
+Aidoo, L. (2024). Examining the determinants of renewable energy consumption in the southern African power pool. Managing Global Transitions, 22(2). https://doi.org/10.26493/1854-6935.22.121-142 
+<br>
+Ergun, S. J., & Rivas, M. F. (2023). Does higher income lead to more renewable energy consumption? Evidence from emerging-Asian countries. Heliyon, 9(1), e13049. https://doi.org/10.1016/j.heliyon.2023.e13049
+<br>
+International Energy Agency. (2024). Reducing the cost of capital: Strategies to unlock clean energy investment in emerging and developing economies. In International Energy Agency Reports. International Energy Agency. https://www.proquest.com/docview/3146999884
+<br>
+International Energy Agency. (2026). Africa – Energy Mix. IEA. https://www.iea.org/regions/africa/energy-mix
+<br>
+OECD. (2025). Investment (GFCF). OECD. https://www.oecd.org/en/data/indicators/investment-gfcf.html
+<br>
+Osińska, M., Khan, A. M., & Kwiatkowski, J. (2024). Identifying economic factors of renewable energy consumption—A global perspective. Energies, 17(15), 3715. https://doi.org/10.3390/en17153715
+<br>
+Our World in Data. (2026). Share of final energy use that comes from renewable sources. Our World in Data. https://ourworldindata.org/grapher/share-of-final-energy-consumption-from-renewable-sources
+<br>
+Renewable Energy Institute. (2025). Renewable Energy Insights - The Importance of Renewable Energy for the Future. The Renewable Energy Institute. https://www.renewableinstitute.org/the-importance-of-renewable-energy-for-the-future/
+<br>
+Shahzad, U., Radulescu, M., Rahim, S., Isik, C., Yousaf, Z., & Ionescu, S. (2021). Do Environment-Related Policy Instruments and Technologies Facilitate Renewable Energy Generation? Exploring the Contextual Evidence from Developed Economies. Energies, 14(3), 690. https://doi.org/10.3390/en14030690
+<br>
+World Bank. (2015). Metadata. Worldbank.Org. https://databank.worldbank.org/metadataglossary/sustainable-energy-for-all/series/3.1_RE.CONSUMPTION
+<br>
+Wu, H., Mentel, U., Lew, G., & Wang, S. (2022). What drives renewable energy in the group of seven economies? Evidence from non-parametric panel methods. Economic Research-Ekonomska Istraživanja, 36(1), 1708–1734. https://doi.org/10.1080/1331677x.2022.2092525
+<br>
+
 

@@ -22,6 +22,10 @@ library(performance)
 
 # *To what extend do different economic factors affect Renewable Energy Consumption ?*
 
+## Abstract ##
+<br>
+The study uses Ordinary Least Squares regression to examine the relationship between various economic factors and the use of renewable energy. The multivariable model achieves a slightly higher R-squared than the OLS models however model selection criteria favours the simpler log GDP per capita model. Nevertheless, diagnostic tests indicate that even the preferred model (log GDP) does not fully satisfy the assumptions of the OLS. The findings suggest that higher-income countries tend to have lower renewable energy shares in their final energy consumption, although this relationship should be interpreted cautiously. <br>
+
 ## Introduction ## 
 <br>
 The switch to renewable energies is a pressing global concern, given rising temperatures, climate change disasters and geopolitical instability, which all result, directly or indirectly, from reliance on fossil fuels and the consequent release of greenhouse gases (Renewable Energy Institute, 2025). <br>

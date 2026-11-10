@@ -20,7 +20,7 @@ library(ggplot2)
 library(performance)
 ```
 
-# *To what extend do different economic factors affect Renewable Energy Consumption ?*
+# *To what extent do different economic factors affect Renewable Energy Consumption?*
 
 ## Abstract ##
 <br>
